@@ -1,0 +1,30 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/tv_area_code"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:text="+86"
+        android:textColor="@color/colorPrimaryBlack"
+        android:textSize="13dp" />
+
+    <View
+        android:layout_width="1px"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="12dp"
+        android:background="#E6EAF0" />
+
+    <com.lingxi.basic.ui.view.EditClearText
+        android:id="@+id/et_phone"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:background="@null"
+        android:hint="@string/input_phone_code"
+        android:inputType="phone"
+        android:paddingHorizontal="16dp"
+        android:textSize="16sp" />
+</merge>

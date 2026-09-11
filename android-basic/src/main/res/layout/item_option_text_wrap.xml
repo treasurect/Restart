@@ -1,0 +1,13 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="90dp"
+    android:layout_height="32dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tv_options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/colorPrimaryBlack"
+        android:textSize="13sp"
+        android:gravity="center"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

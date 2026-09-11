@@ -1,0 +1,25 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.lingxi.basic.ui.view.EditClearText
+        android:id="@+id/et_code"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:hint="@string/verify_code"
+        android:inputType="number"
+        android:background="@null"
+        android:paddingStart="12dp"
+        android:textColor="@color/colorPrimaryBlack"
+        android:textColorHint="@color/colorPrimaryGray"
+        android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/tv_send"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:paddingHorizontal="16dp"
+        android:gravity="center"
+        android:text="@string/verify_code_req"
+        android:textColor="@color/colorPrimary"
+        android:textSize="14sp" />
+</merge>
