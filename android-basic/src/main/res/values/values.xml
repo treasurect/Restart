@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <color name="pickerview_wheelview_textcolor_divider">#FFFFFFFF</color>
-    <dimen name="pickerview_topbar_height">40dp</dimen>
-    <dimen name="pickerview_topbar_padding">20dp</dimen>
-
-</resources>
