@@ -1,0 +1,3 @@
+[submodule "android-basic"]
+	path = android-basic
+	url = https://github.com/treasurect/android-basic.git
