@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" >
+        <trust-anchors>
+            <!-- 信任系统 CA -->
+            <certificates src="system" />
+            <!-- 信任用户安装的 CA（Charles 证书会装在这里） -->
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">chaolianzhaoshang-gateway-base.zhaoshangpi.lxdev.cn</domain>
+    </domain-config>
+</network-security-config>

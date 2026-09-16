@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Restart</string>
+    <string name="tab_home">首页</string>
+    <string name="tab_market">市集</string>
+    <string name="tab_message">消息</string>
+    <string name="tab_me">我</string>
+    <string name="action_search">搜索</string>
+    <string name="action_close">关闭</string>
+    <string name="action_follow">关注</string>
+    <string name="action_publish">发布</string>
+    <string name="profile_edit">编辑主页</string>
 </resources>
