@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayoutMediator
 import com.treasure.restart.base.BaseFragment
 import com.treasure.restart.helper.AppRestartHelper
 import com.treasure.restart.helper.LoginManager
 import com.treasure.restart.databinding.FragmentProfileBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class ProfileFragment : BaseFragment() {
 
@@ -41,9 +45,12 @@ class ProfileFragment : BaseFragment() {
         }
 
         binding.profileDrawer.btnLogout.setOnClickListener {
-            binding.profileDrawerLayout.closeDrawer(binding.profileDrawer.root)
-            LoginManager.logout()
-            AppRestartHelper.restart(requireContext())
+            lifecycleScope.launch {
+                binding.profileDrawerLayout.closeDrawer(binding.profileDrawer.root)
+                LoginManager.logout()
+                delay(500.milliseconds)
+                AppRestartHelper.restart(requireContext())
+            }
         }
 
         binding.profilePager.adapter = ProfilePagerAdapter(this, viewModel.tabs)

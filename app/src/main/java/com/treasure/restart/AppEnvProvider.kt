@@ -12,10 +12,10 @@ class AppEnvProvider(context: Context, currentEnv: AppEnvironment) : IEnvironmen
     }
     
     override fun getBaseUrl(env: AppEnvironment): String = when (env) {
-        AppEnvironment.DEV -> "http://chaolianzhaoshang-gateway-base.zhaoshangpi.lxdev.cn/"
-        AppEnvironment.TEST -> "https://chaolianzhaoshang-gateway-base.zhaoshangpi.lingxitest.com/"
-        AppEnvironment.PRE -> "https://api-zsp.lingxidata.cn/" // TODO: 配置预发环境URL
-        AppEnvironment.PROD -> "https://api-zsp.lingxidata.cn/"
+        AppEnvironment.DEV -> "http://10.17.11.33:8080/"
+        AppEnvironment.TEST -> "http://10.17.11.33:8080/"
+        AppEnvironment.PRE -> "http://10.17.11.33:8080/"
+        AppEnvironment.PROD -> "http://10.17.11.33:8080/"
     }
 
     override fun isLogEnable(env: AppEnvironment): Boolean =
