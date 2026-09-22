@@ -3,11 +3,22 @@ package com.treasure.restart
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.treasure.basic.ContextHolder
+import com.treasure.basic.SharedKey
+import com.treasure.basic.helper.AppEvent
+import com.treasure.basic.helper.AppEventManager
+import com.treasure.basic.helper.AppRestartHelper
+import com.treasure.basic.helper.SharePreferenceManager
 import com.treasure.restart.base.BaseActivity
 import com.treasure.restart.helper.LoginManager
 import com.treasure.restart.databinding.ActivityMainBinding
@@ -16,6 +27,9 @@ import com.treasure.restart.func.main.home.HomeFragment
 import com.treasure.restart.func.main.market.MarketFragment
 import com.treasure.restart.func.main.message.MessageFragment
 import com.treasure.restart.func.main.profile.ProfileFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : BaseActivity() {
 
@@ -52,6 +66,28 @@ class MainActivity : BaseActivity() {
             }
         })
         updateBottomNav(0)
+
+        observeAppEvents()
+    }
+
+    private fun observeAppEvents() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                AppEventManager.events.collect {
+                    when(it) {
+                        AppEvent.LoginExpired -> {
+                            SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, false)
+                            SharePreferenceManager.remove(SharedKey.ACCESS_TOKEN)
+                            lifecycleScope.launch {
+                                delay(500.milliseconds)
+                                AppRestartHelper.restart(this@MainActivity)
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {

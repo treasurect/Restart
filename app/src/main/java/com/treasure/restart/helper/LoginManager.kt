@@ -5,6 +5,8 @@ import com.treasure.basic.ContextHolder
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.treasure.basic.SharedKey
+import com.treasure.basic.helper.AppEventManager
+import com.treasure.basic.helper.AppRestartHelper
 import com.treasure.basic.helper.SharePreferenceManager
 import com.treasure.basic.utils.ToastUtils
 import com.treasure.restart.network.repository.UserResponse
@@ -25,60 +27,53 @@ object LoginManager {
     fun login(context: Context?, loginType: LoginType, map: HashMap<String, Any> = HashMap()) {
         when (loginType) {
             LoginType.TYPE_PWD -> {
-                (context as? FragmentActivity)?.lifecycleScope?.launch {
-                    val phone = "${map["phone"] ?: ""}"
-                    val value = "${map["pwd"] ?: ""}"
-                    UserResponse().actionLoginCode(phone, value).collectLatest {
-                        if (it.code == 200) {
-                            ToastUtils.show(it.msg ?: "")
-                            SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
-                            SharePreferenceManager.putString(SharedKey.ACCESS_TOKEN, it.data?.token ?: "")
-                            delay(500.milliseconds)
-                            AppRestartHelper.restart(context)
-                        } else {
-                            ToastUtils.show("登录失败：${it.msg}")
-                        }
-                    }
-                }
+                actionLogin(context, map, loginType)
             }
 
             LoginType.TYPE_VERIFY_CODE -> {
-                (context as? FragmentActivity)?.lifecycleScope?.launch {
-                    val phone = "${map["phone"] ?: ""}"
-                    UserResponse().actionLoginCode(phone, "123456").collectLatest {
-                        if (it.code == 200) {
-                            ToastUtils.show(it.msg ?: "")
-                            SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
-                            delay(500.milliseconds)
-                            AppRestartHelper.restart(context)
-                        } else {
-                            ToastUtils.show("登录失败：${it.msg}")
-                        }
-                    }
-                }
+                map["user_pwd"] = "666666"
+                actionLogin(context, map, loginType)
             }
 
             LoginType.TYPE_ONE_KEY -> {
-                ToastUtils.show("登录成功")
-                SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
-                AppRestartHelper.restart(ContextHolder.app())
+                map["user_name"] = "one_key"
+                map["user_pwd"] = "123456"
+                actionLogin(context, map, loginType)
             }
 
             LoginType.TYPE_WECHAT -> {
-                ToastUtils.show("登录成功")
-                SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
-                AppRestartHelper.restart(ContextHolder.app())
-                AppRestartHelper.restart(ContextHolder.app())
+                map["user_name"] = "wechat"
+                map["user_pwd"] = "123456"
+                actionLogin(context, map, loginType)
             }
 
             LoginType.TYPE_ALIPAY -> {
-                ToastUtils.show("登录成功")
-                SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
-                AppRestartHelper.restart(ContextHolder.app())
+                map["user_name"] = "alipay"
+                map["user_pwd"] = "123456"
+                actionLogin(context, map, loginType)
             }
         }
 
 
+    }
+
+    private fun actionLogin(context: Context?, map: HashMap<String, Any>, loginType: LoginType) {
+        (context as? FragmentActivity)?.lifecycleScope?.launch {
+            val phone = "${map["user_name"] ?: ""}"
+            val value = "${map["user_pwd"] ?: ""}"
+            UserResponse().actionLoginCode(phone, value).collectLatest {
+                if (it.code == 200) {
+                    ToastUtils.show(it.msg ?: "")
+                    SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)
+                    SharePreferenceManager.putString(SharedKey.ACCESS_TOKEN, it.data?.token ?: "")
+                    AppEventManager.resetLoginExpired()
+                    delay(500.milliseconds)
+                    AppRestartHelper.restart(context)
+                } else {
+                    ToastUtils.show("登录失败：${it.msg}")
+                }
+            }
+        }
     }
 
     fun logout() {

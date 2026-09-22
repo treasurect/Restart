@@ -12,7 +12,7 @@ class AppEnvProvider(context: Context, currentEnv: AppEnvironment) : IEnvironmen
     }
     
     override fun getBaseUrl(env: AppEnvironment): String = when (env) {
-        AppEnvironment.DEV -> "http://10.17.11.33:8080/"
+        AppEnvironment.DEV -> "http://124.222.46.122:8080/"
         AppEnvironment.TEST -> "http://10.17.11.33:8080/"
         AppEnvironment.PRE -> "http://10.17.11.33:8080/"
         AppEnvironment.PROD -> "http://10.17.11.33:8080/"
