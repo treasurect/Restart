@@ -3,20 +3,21 @@ package com.treasure.restart.func.main.profile
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.treasure.restart.bean.UserInfoBean
 import com.treasure.restart.databinding.ItemProfileActionBinding
 import com.treasure.restart.databinding.ItemProfileHeaderBinding
-import com.treasure.restart.func.main.profile.model.ProfileData
 
-class ProfileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ProfileListAdapter(
+    private val onAvatarClick: (() -> Unit)? = null
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val items = mutableListOf<ProfileListItem>()
 
-    fun setProfile(profile: ProfileData) {
+    fun setProfile(profile: UserInfoBean) {
         items.clear()
         items.add(ProfileListItem.Header(profile))
-        profile.actions.forEach { action ->
-            items.add(ProfileListItem.Action(action.first, action.second))
-        }
+        items.add(ProfileListItem.Action("① 浏览记录", "看过的笔记"))
+        items.add(ProfileListItem.Action("@ 钱包", "查看详情"))
         notifyDataSetChanged()
     }
 
@@ -31,7 +32,8 @@ class ProfileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             TYPE_HEADER -> HeaderViewHolder(
-                ItemProfileHeaderBinding.inflate(inflater, parent, false)
+                ItemProfileHeaderBinding.inflate(inflater, parent, false),
+                onAvatarClick
             )
             else -> ActionViewHolder(
                 ItemProfileActionBinding.inflate(inflater, parent, false)
@@ -48,16 +50,20 @@ class ProfileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int = items.size
 
-    class HeaderViewHolder(private val binding: ItemProfileHeaderBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(profile: ProfileData) {
-            binding.tvProfileAvatar.text = profile.avatarText
-            binding.tvProfileNickname.text = profile.nickname
-            binding.tvProfileUserId.text = profile.userId
-            binding.tvProfileBio.text = profile.bio
-            binding.tvFollowCount.text = profile.stats[0].first
-            binding.tvFansCount.text = profile.stats[1].first
-            binding.tvLikeCount.text = profile.stats[2].first
+    class HeaderViewHolder(
+        private val binding: ItemProfileHeaderBinding,
+        private val onAvatarClick: (() -> Unit)?
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(profile: UserInfoBean) {
+            val nickname = profile.nickname.orEmpty().ifBlank { "踩单车" }
+            binding.tvProfileAvatar.text = nickname.firstOrNull()?.toString() ?: "踩"
+            binding.tvProfileNickname.text = nickname
+            binding.tvProfileUserId.text = profile.userId?.let { "小红书号：$it" } ?: "小红书号：26248013403"
+            binding.tvProfileBio.text = "点击这里，填写简介"
+            binding.tvFollowCount.text = "0"
+            binding.tvFansCount.text = "0"
+            binding.tvLikeCount.text = "0"
+            binding.tvProfileAvatar.setOnClickListener { onAvatarClick?.invoke() }
         }
     }
 
@@ -70,7 +76,7 @@ class ProfileListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private sealed class ProfileListItem {
-        data class Header(val profile: ProfileData) : ProfileListItem()
+        data class Header(val profile: UserInfoBean) : ProfileListItem()
         data class Action(val title: String, val value: String) : ProfileListItem()
     }
 

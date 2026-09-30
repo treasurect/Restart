@@ -1,6 +1,6 @@
 package com.treasure.restart.bean
 
-data class LoginResponse(
+data class LoginBean(
     val nickname: String,
     val token: String,
     val userId: Int,

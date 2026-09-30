@@ -1,4 +1,4 @@
-package com.treasure.restart.func.main.message.model
+package com.treasure.restart.bean
 
 sealed class MessageListItem {
     data class Section(val title: String) : MessageListItem()

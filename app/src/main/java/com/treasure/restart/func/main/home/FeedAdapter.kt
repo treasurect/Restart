@@ -3,8 +3,8 @@ package com.treasure.restart.func.main.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.treasure.restart.bean.FeedItem
 import com.treasure.restart.databinding.ItemFeedBinding
-import com.treasure.restart.func.main.home.model.FeedItem
 
 class FeedAdapter : RecyclerView.Adapter<FeedAdapter.FeedViewHolder>() {
 

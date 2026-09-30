@@ -5,17 +5,20 @@ import com.treasure.basic.network.safeApiCall
 import com.treasure.basic.utils.Ext.toJsonBody
 import com.treasure.restart.network.api.UserApi
 
-class UserResponse {
+class UserRepository {
     private val api = RetrofitClient.getInstance().create(UserApi::class.java)
 
-    suspend fun actionLoginCode(phone: String, pwd: String) =
-        safeApiCall {
+    suspend fun actionLoginCode(username: String, pwd: String) = safeApiCall {
             api.actionLoginPwd(
                 hashMapOf<String, Any>(
-                    "username" to phone,
+                    "username" to username,
                     "password" to pwd,
-                    "nickname" to phone
+                    "nickname" to username
                 ).toJsonBody()
             )
         }
+
+    suspend fun getUserInfo() = safeApiCall {
+        api.getUserInfo()
+    }
 }

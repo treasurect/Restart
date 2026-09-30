@@ -3,7 +3,7 @@ package com.treasure.restart.func.main.message
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.treasure.restart.func.main.message.model.MessageListItem
+import com.treasure.restart.bean.MessageListItem
 
 class MessageViewModel : ViewModel() {
 

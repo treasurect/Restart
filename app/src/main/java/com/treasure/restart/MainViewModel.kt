@@ -9,7 +9,7 @@ import com.treasure.basic.base.BaseViewModel
 import com.treasure.basic.network.ApiResult
 import com.treasure.basic.network.asResult
 import com.treasure.restart.bean.WeeklyReportList
-import com.treasure.restart.func.main.home.model.FeedItem
+import com.treasure.restart.bean.FeedItem
 import com.treasure.restart.network.repository.TestRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.treasure.restart.databinding.ItemMessageBinding
 import com.treasure.restart.databinding.ItemMessageSectionBinding
 import com.treasure.restart.databinding.ItemSuggestUserBinding
-import com.treasure.restart.func.main.message.model.MessageListItem
+import com.treasure.restart.bean.MessageListItem
 
 class MessageAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val items = mutableListOf<com.treasure.restart.func.main.message.model.MessageListItem>()
+    private val items = mutableListOf<MessageListItem>()
 
-    fun submitList(newItems: List<com.treasure.restart.func.main.message.model.MessageListItem>) {
+    fun submitList(newItems: List<MessageListItem>) {
         items.clear()
         items.addAll(newItems)
         notifyDataSetChanged()

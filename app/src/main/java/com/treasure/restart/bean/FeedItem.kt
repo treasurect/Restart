@@ -1,4 +1,4 @@
-package com.treasure.restart.func.main.home.model
+package com.treasure.restart.bean
 
 data class FeedItem(
     val id: Long,

@@ -1,7 +1,6 @@
 package com.treasure.restart.helper
 
 import android.content.Context
-import com.treasure.basic.ContextHolder
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import com.treasure.basic.SharedKey
@@ -9,7 +8,7 @@ import com.treasure.basic.helper.AppEventManager
 import com.treasure.basic.helper.AppRestartHelper
 import com.treasure.basic.helper.SharePreferenceManager
 import com.treasure.basic.utils.ToastUtils
-import com.treasure.restart.network.repository.UserResponse
+import com.treasure.restart.network.repository.UserRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -61,7 +60,7 @@ object LoginManager {
         (context as? FragmentActivity)?.lifecycleScope?.launch {
             val phone = "${map["user_name"] ?: ""}"
             val value = "${map["user_pwd"] ?: ""}"
-            UserResponse().actionLoginCode(phone, value).collectLatest {
+            UserRepository().actionLoginCode(phone, value).collectLatest {
                 if (it.code == 200) {
                     ToastUtils.show(it.msg ?: "")
                     SharePreferenceManager.putBoolean(SharedKey.KEY_LOGGED_IN, true)

@@ -1,6 +1,7 @@
 package com.treasure.restart.func.main.profile
 
 import android.os.Bundle
+import android.widget.Toast
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +22,9 @@ class ProfileFragment : BaseFragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
-    private val profileAdapter = ProfileListAdapter()
+    private val profileAdapter = ProfileListAdapter(onAvatarClick = {
+        viewModel.loadUserInfo(showJson = true)
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,12 +37,24 @@ class ProfileFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val profile = viewModel.profile.value ?: return
-
         binding.profileRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.profileRecycler.adapter = profileAdapter
-        profileAdapter.setProfile(profile)
+        binding.profilePager.adapter = ProfilePagerAdapter(this, viewModel.tabs)
+        TabLayoutMediator(binding.profileTabs, binding.profilePager) { tab, position ->
+            tab.text = viewModel.tabs[position]
+        }.attach()
+        initObserver()
+        initListener()
+        viewModel.loadUserInfo()
+    }
 
+    private fun initObserver() {
+        viewModel.profile.observe(viewLifecycleOwner) { profile ->
+            profileAdapter.setProfile(profile)
+        }
+    }
+
+    private fun initListener() {
         binding.ivProfileMenu.setOnClickListener {
             binding.profileDrawerLayout.openDrawer(binding.profileDrawer.root)
         }
@@ -52,11 +67,6 @@ class ProfileFragment : BaseFragment() {
                 AppRestartHelper.restart(requireContext())
             }
         }
-
-        binding.profilePager.adapter = ProfilePagerAdapter(this, viewModel.tabs)
-        TabLayoutMediator(binding.profileTabs, binding.profilePager) { tab, position ->
-            tab.text = viewModel.tabs[position]
-        }.attach()
     }
 
     override fun onDestroyView() {
