@@ -1,13 +1,10 @@
-package com.treasure.restart.func.main
+package com.treasure.restart.func.media
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.treasure.basic.view.CommonImageView
-import com.treasure.basic.view.LargeImageView
 import com.treasure.restart.R
 
 class ImagePreviewAdapter(
@@ -35,11 +32,7 @@ class ImagePreviewAdapter(
         position: Int
     ) {
 
-        val value = images[position]
-
-        val uri = Uri.parse(value)
-
-        holder.imageView.load(uri)
+        holder.imageView.load(images[position])
     }
 
     override fun getItemCount(): Int {

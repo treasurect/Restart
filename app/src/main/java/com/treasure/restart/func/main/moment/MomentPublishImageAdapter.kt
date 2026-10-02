@@ -1,4 +1,4 @@
-package com.treasure.restart.func.main
+package com.treasure.restart.func.main.moment
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.treasure.restart.R
 
-class PublishImageAdapter(
+class MomentPublishImageAdapter(
     private val onClick: (Int) -> Unit,
     private val onDelete: (Int) -> Unit,
     private val onAdd: () -> Unit

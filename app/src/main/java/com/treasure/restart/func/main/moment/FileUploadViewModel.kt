@@ -1,4 +1,4 @@
-package com.treasure.restart.func.main
+package com.treasure.restart.func.main.moment
 
 import android.app.Application
 import android.content.Context
@@ -9,8 +9,9 @@ import com.treasure.basic.base.BaseViewModel
 import com.treasure.basic.helper.LogHelper
 import com.treasure.basic.network.ApiResult
 import com.treasure.basic.network.asResult
-import com.treasure.basic.utils.ToastUtils
 import com.treasure.restart.network.repository.FileRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -18,29 +19,27 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import java.io.IOException
 
-class UploadViewModel(application: Application) : BaseViewModel(application) {
+class FileUploadViewModel(application: Application) : BaseViewModel(application) {
     private val response = FileRepository()
 
+    private val _uploadResult = MutableSharedFlow<List<String>?>()
+    val uploadResult = _uploadResult.asSharedFlow()
     fun uploadImage(uris: List<Uri>) {
         viewModelScope.launch {
             try {
-                val parts = uris.map { uri ->
-                    createMultipart(
-                        ContextHolder.app(),
-                        uri
-                    )
-                }
                 LogHelper.i("开始上传 -> Uri -> ${uris.joinToString { it.toString() }}")
-                LogHelper.i("Multipart 创建完成")
-
+                val parts = uris.map { uri ->
+                    createMultipart(ContextHolder.app(), uri)
+                }
                 response.uploadFiles(parts).asResult().collect { result ->
+                    _uploadResult.emit(if (result is ApiResult.Success) result.data else null)
                     when (result) {
                         is ApiResult.Error -> {
-                            ToastUtils.show("上传失败 -> ${result.msg}")
+                            LogHelper.i("图片上传失败 -> ${result.msg}")
                         }
 
-                        is ApiResult.Success<*> -> {
-                            ToastUtils.show("上传成功 - > ${result.data}")
+                        is ApiResult.Success -> {
+                            LogHelper.i("图片上传成功 - > ${result.data}")
                         }
                     }
                 }

@@ -9,6 +9,7 @@ import com.treasure.basic.utils.PermissionHelper
 import com.treasure.basic.utils.SystemBarUtil
 import com.treasure.basic.utils.SystemBarUtil.enableBottomStatusBar
 import com.treasure.basic.utils.SystemBarUtil.enableImmersiveStatusBar
+import com.treasure.basic.view.LoadingView
 
 
 /**
@@ -88,6 +89,26 @@ open class BaseActivity : AppCompatActivity() {
         view.layoutParams = layoutParams
     }
 
+    fun isActive(): Boolean {
+        return this.isDestroyed.not() && this.isFinishing.not()
+    }
+
+    private var loadingView: LoadingView? = null
+    protected fun showLoading(message: String = "加载中...") {
+        loadingView?.show(message) ?: run {
+            window.decorView.post {
+                val decorView = window.decorView as ViewGroup
+                if (loadingView != null) return@post
+                loadingView = LoadingView(this)
+                decorView.addView(loadingView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+            }
+        }
+    }
+
+    protected fun hideLoading() {
+        loadingView?.hide()
+    }
+
     override fun finish() {
         if (this.isFinishing.not() && this.isDestroyed.not()) {
             super.finish()
@@ -98,9 +119,5 @@ open class BaseActivity : AppCompatActivity() {
         super.onDestroy()
         ActivityCollector.removeActivity(this)
         //EventBus.getDefault().unregister(this)
-    }
-
-    fun isActive(): Boolean {
-        return this.isDestroyed.not() && this.isFinishing.not()
     }
 }

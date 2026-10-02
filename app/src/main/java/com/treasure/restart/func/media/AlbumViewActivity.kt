@@ -1,7 +1,6 @@
 package com.treasure.restart.func.media
 
 import android.content.ContentUris
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -9,8 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.treasure.restart.base.BaseActivity
 import com.treasure.restart.databinding.ActivityAlbumViewBinding
-import com.treasure.restart.func.main.PublishActivity
-import com.treasure.restart.helper.Constants
+import com.treasure.restart.func.main.moment.MomentPublishActivity
 
 class AlbumViewActivity : BaseActivity() {
 
@@ -74,7 +72,7 @@ class AlbumViewActivity : BaseActivity() {
     }
 
     private fun returnSelectedImages() {
-        PublishActivity.start(this, selectedUris)
+        MomentPublishActivity.start(this, selectedUris)
         finish()
     }
 

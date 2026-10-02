@@ -1,6 +1,5 @@
 package com.treasure.restart.func.media
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -13,8 +12,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.treasure.restart.base.BaseActivity
 import com.treasure.restart.databinding.ActivityCameraViewBinding
-import com.treasure.restart.func.main.PublishActivity
-import com.treasure.restart.helper.Constants
+import com.treasure.restart.func.main.moment.MomentPublishActivity
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -108,7 +106,7 @@ class CameraViewActivity : BaseActivity() {
      * 拍照成功回调，将照片 Uri 返回给 PublishActivity 统一处理。
      */
     private fun onPhotoCaptured(photoFile: File) {
-        PublishActivity.start(this, listOf(Uri.fromFile(photoFile)))
+        MomentPublishActivity.start(this, listOf(Uri.fromFile(photoFile)))
         finish()
     }
 

@@ -1,10 +1,11 @@
-package com.treasure.restart.func.main
+package com.treasure.restart.func.media
 
 import android.os.Bundle
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.treasure.basic.helper.LogHelper
 import com.treasure.restart.R
 import com.treasure.restart.base.BaseActivity
 
@@ -38,10 +39,11 @@ class ImagePreviewActivity : BaseActivity() {
             R.layout.activity_image_preview
         )
 
-        images =
-            intent.getStringArrayListExtra(
+        images = intent.getStringArrayListExtra(
                 EXTRA_IMAGES
             ) ?: arrayListOf()
+
+        LogHelper.i("Images: ${images.joinToString(",")}")
 
         currentPosition =
             intent.getIntExtra(

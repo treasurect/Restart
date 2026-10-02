@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
@@ -25,10 +24,9 @@ import com.treasure.basic.utils.PermissionHelper
 import com.treasure.restart.base.BaseActivity
 import com.treasure.restart.databinding.ActivityMainBinding
 import com.treasure.restart.func.login.LoginFragment
-import com.treasure.restart.func.main.UploadViewModel
 import com.treasure.restart.helper.LoginManager
 import com.treasure.restart.func.main.home.HomeFragment
-import com.treasure.restart.func.main.market.MarketFragment
+import com.treasure.restart.func.main.moment.MomentListFragment
 import com.treasure.restart.func.main.message.MessageFragment
 import com.treasure.restart.func.main.profile.ProfileFragment
 import com.treasure.restart.func.media.AlbumViewActivity
@@ -178,7 +176,7 @@ class MainActivity : BaseActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> HomeFragment()
-                1 -> MarketFragment()
+                1 -> MomentListFragment()
                 2 -> MessageFragment()
                 else -> if (LoginManager.isLoggedIn()) ProfileFragment() else LoginFragment()
             }
