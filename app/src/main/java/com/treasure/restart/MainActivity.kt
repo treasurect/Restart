@@ -55,7 +55,7 @@ class MainActivity : BaseActivity() {
             binding.mainPager.setCurrentItem(1, false)
         }
         binding.navPublish.setOnClickListener {
-           showPublishDialog()
+            showPublishDialog()
         }
         binding.navMessage.setOnClickListener {
             binding.mainPager.setCurrentItem(2, false)

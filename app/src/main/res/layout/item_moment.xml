@@ -68,12 +68,14 @@
 
             <TextView
                 android:id="@+id/action"
-                android:layout_width="36dp"
+                android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:gravity="center"
                 android:text="•••"
                 android:textColor="#576B95"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:letterSpacing="0.1"
+                android:paddingHorizontal="5dp"/>
 
         </LinearLayout>
 

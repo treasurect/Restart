@@ -5,59 +5,48 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.treasure.basic.SharedKey
+import com.treasure.basic.ContextHolder
 import com.treasure.basic.helper.AppEvent
 import com.treasure.basic.helper.AppEventManager
-import com.treasure.basic.helper.AppRestartHelper
-import com.treasure.basic.helper.SharePreferenceManager
+import com.treasure.basic.utils.GlideUtils
 import com.treasure.basic.utils.ToastUtils
 import com.treasure.restart.R
 import com.treasure.restart.base.BaseFragment
+import com.treasure.restart.databinding.FragmentMomentListBinding
+import com.treasure.restart.func.main.profile.ProfileViewModel
 import com.treasure.restart.func.media.ImagePreviewActivity
 import kotlinx.coroutines.launch
 
 class MomentListFragment : BaseFragment() {
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var stickyHeader: View
-    private lateinit var stickyAvatar: ImageView
-    private lateinit var stickyNickname: TextView
+    private lateinit var binding: FragmentMomentListBinding
     private lateinit var adapter: MomentListAdapter
 
     private val viewModel: MomentViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_moment, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentMomentListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        initView(view)
+    override fun lazyInit(view: View?) {
+        super.lazyInit(view)
         initRecyclerView()
         initRefresh()
         observeData()
         observeAppEvents()
 
         viewModel.loadMomentList(refresh = true)
-    }
-
-    private fun initView(view: View) {
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
-        recyclerView = view.findViewById(R.id.recyclerView)
-        stickyHeader = view.findViewById(R.id.stickyHeader)
-        stickyAvatar = view.findViewById(R.id.stickyAvatar)
-        stickyNickname = view.findViewById(R.id.stickyNickname)
+        profileViewModel.loadUserInfo()
     }
 
     private fun initRecyclerView() {
@@ -65,25 +54,32 @@ class MomentListFragment : BaseFragment() {
             openImagePreview(position, images)
         }
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = adapter
-        recyclerView.setHasFixedSize(false)
-        recyclerView.itemAnimator = null
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.setHasFixedSize(false)
+        binding.recyclerView.itemAnimator = null
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
                 updateStickyHeader()
-                checkLoadMore()
             }
         })
     }
 
     private fun initRefresh() {
-        swipeRefreshLayout.setOnRefreshListener {
+        binding.smartlay.setEnableRefresh(true)
+        binding.smartlay.setEnableLoadMore(true)
+        binding.smartlay.setEnableAutoLoadMore(true)
+        binding.smartlay.setEnableLoadMoreWhenContentNotFull(false)
+
+        binding.smartlay.setOnRefreshListener {
             viewModel.loadMomentList(refresh = true)
+        }
+        binding.smartlay.setOnLoadMoreListener {
+            viewModel.loadMomentList(refresh = false)
         }
     }
 
@@ -99,47 +95,38 @@ class MomentListFragment : BaseFragment() {
                 }
 
                 launch {
-                    viewModel.isLoading.collect { loading ->
-                        swipeRefreshLayout.isRefreshing = loading && viewModel.currentPage.value == 2
-                    }
-                }
-
-                launch {
-                    viewModel.error.collect { message ->
-                        if (isAdded) {
-                            ToastUtils.show(message)
+                    viewModel.listState.collect { state ->
+                        when (state.first) {
+                            1 -> if (state.second) binding.smartlay.finishRefresh() else binding.smartlay.finishRefreshWithNoMoreData()
+                            2 -> if (state.second) binding.smartlay.finishLoadMore() else binding.smartlay.finishLoadMoreWithNoMoreData()
                         }
                     }
                 }
             }
         }
-    }
 
-    private fun checkLoadMore() {
-        if (viewModel.isLoading.value) return
-        if (!viewModel.hasMore.value) return
-
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
-        val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
-
-        if (lastVisiblePosition >= adapter.itemCount - 3) {
-            viewModel.loadMomentList(refresh = false)
+        profileViewModel.profile.observe(viewLifecycleOwner) {
+            adapter.setHeader(it)
         }
     }
 
     private fun updateStickyHeader() {
-        val layoutManager = recyclerView.layoutManager as? LinearLayoutManager ?: return
+        val layoutManager = binding.recyclerView.layoutManager as? LinearLayoutManager ?: return
         val firstVisiblePosition = layoutManager.findFirstVisibleItemPosition()
 
         if (firstVisiblePosition <= 0) {
-            stickyHeader.visibility = View.GONE
+            binding.stickyHeader.visibility = View.GONE
             return
         }
 
-        stickyHeader.visibility = View.VISIBLE
-
-        stickyAvatar.setImageResource(R.drawable.ic_default_avatar)
-        stickyNickname.text = "我的昵称"
+        binding.stickyHeader.visibility = View.VISIBLE
+        profileViewModel.profile.value?.let {
+            GlideUtils.loadCircle(ContextHolder.app(), it.avatar, binding.stickyAvatar)
+            binding.stickyNickname.text = it.username
+        } ?: run {
+            binding.stickyAvatar.setImageResource(R.drawable.ic_default_avatar)
+            binding.stickyNickname.text = "我的昵称"
+        }
     }
 
     private fun openImagePreview(position: Int, images: List<String>) {
@@ -151,21 +138,20 @@ class MomentListFragment : BaseFragment() {
 
     private fun observeAppEvents() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                AppEventManager.events.collect {
-                    when (it) {
-                        AppEvent.MomentPublishSuccess -> {
-                            viewModel.loadMomentList(refresh = true)
-                        }
-                        else -> {}
+            AppEventManager.events.collect {
+                when (it) {
+                    AppEvent.MomentPublishSuccess -> {
+                        viewModel.loadMomentList(refresh = true)
                     }
+
+                    else -> {}
                 }
             }
         }
     }
 
     override fun onDestroyView() {
-        recyclerView.adapter = null
+        binding.recyclerView.adapter = null
         super.onDestroyView()
     }
 }

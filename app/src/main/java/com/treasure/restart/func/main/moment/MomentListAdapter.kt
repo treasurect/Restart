@@ -8,21 +8,34 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.treasure.basic.ContextHolder
+import com.treasure.basic.utils.GlideUtils
 import com.treasure.restart.R
 import com.treasure.restart.bean.MomentItem
+import com.treasure.restart.bean.UserInfoBean
 
-class MomentListAdapter(private val items: MutableList<MomentItem>, private val onImageClick: (Int, List<String>) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MomentListAdapter(
+    private val items: MutableList<MomentItem>,
+    private val onImageClick: (Int, List<String>) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         private const val TYPE_HEADER = 0
         private const val TYPE_MOMENT = 1
     }
 
-    override fun getItemViewType(position: Int): Int = if (position == 0) TYPE_HEADER else TYPE_MOMENT
+    override fun getItemViewType(position: Int): Int =
+        if (position == 0) TYPE_HEADER else TYPE_MOMENT
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return if (viewType == TYPE_HEADER) HeaderViewHolder(inflater.inflate(R.layout.item_moment_header, parent, false)) else MomentViewHolder(inflater.inflate(R.layout.item_moment, parent, false))
+        return if (viewType == TYPE_HEADER) HeaderViewHolder(
+            inflater.inflate(
+                R.layout.item_moment_header,
+                parent,
+                false
+            )
+        ) else MomentViewHolder(inflater.inflate(R.layout.item_moment, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -50,17 +63,30 @@ class MomentListAdapter(private val items: MutableList<MomentItem>, private val 
         notifyItemRangeInserted(startPosition, data.size)
     }
 
-    class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class HeaderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         private val coverImage: ImageView = view.findViewById(R.id.coverImage)
         private val avatar: ImageView = view.findViewById(R.id.avatar)
         private val nickname: TextView = view.findViewById(R.id.nickname)
 
         fun bind() {
-            coverImage.setImageResource(R.drawable.ic_moment_cover)
-            avatar.setImageResource(R.drawable.ic_default_avatar)
-            nickname.text = "我的昵称"
+            userInfo?.let {
+                GlideUtils.loadImage(ContextHolder.app(), it.coverUrl, coverImage)
+                GlideUtils.loadCircle(ContextHolder.app(), it.avatar, avatar)
+                nickname.text = it.username
+            } ?: run {
+                coverImage.setImageResource(R.drawable.ic_moment_cover)
+                avatar.setImageResource(R.drawable.ic_default_avatar)
+                nickname.text = "我的昵称"
+            }
+
         }
+    }
+
+    protected var userInfo: UserInfoBean? = null
+    fun setHeader(userInfoBean: UserInfoBean) {
+        this.userInfo = userInfoBean
+        notifyItemChanged(0)
     }
 
     inner class MomentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -72,7 +98,7 @@ class MomentListAdapter(private val items: MutableList<MomentItem>, private val 
         private val time: TextView = view.findViewById(R.id.time)
 
         fun bind(item: MomentItem) {
-            avatar.setImageResource(R.drawable.ic_default_avatar)
+            GlideUtils.loadCircle(ContextHolder.app(), item.userAvatar, avatar)
             username.text = item.username
             content.text = item.content.orEmpty()
             content.visibility = if (item.content.isNullOrBlank()) View.GONE else View.VISIBLE
@@ -83,7 +109,8 @@ class MomentListAdapter(private val items: MutableList<MomentItem>, private val 
                 imageRecyclerView.visibility = View.GONE
             } else {
                 imageRecyclerView.visibility = View.VISIBLE
-                imageRecyclerView.layoutManager = createImageLayoutManager(imageRecyclerView.context, images.size)
+                imageRecyclerView.layoutManager =
+                    createImageLayoutManager(imageRecyclerView.context, images.size)
                 imageRecyclerView.adapter = MomentListImageAdapter(images, onImageClick)
             }
         }
@@ -93,7 +120,7 @@ class MomentListAdapter(private val items: MutableList<MomentItem>, private val 
         private fun createImageLayoutManager(context: Context, count: Int): GridLayoutManager {
             val spanCount = when (count) {
                 1 -> 1
-                2,4 -> 2
+                2, 4 -> 2
                 else -> 3
             }
             return GridLayoutManager(context, spanCount)

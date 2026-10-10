@@ -17,7 +17,6 @@ import com.treasure.basic.view.LoadingView
  * author:李超(licha)
  */
 open class BaseActivity : AppCompatActivity() {
-    //private var loadingView: FullLoadingView? = null
     var placeHolderView: View? = null
 
     public override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,23 +44,6 @@ open class BaseActivity : AppCompatActivity() {
     protected open fun lazyInit() {}
 
     protected open var immersiveStatusBarEnable = false
-
-    open fun showLoading() {
-//        loadingView?.show() ?: run {
-//            loadingView = FullLoadingView(this@BaseActivity)
-//            val rootView = findViewById<ViewGroup>(R.id.content)
-//            rootView.addView(
-//                loadingView,
-//                ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.MATCH_PARENT
-//            )
-//            loadingView?.show()
-//        }
-    }
-
-    open fun hindLoading() {
-//         loadingView?.hide()
-    }
 
     protected fun requestPermission(permissions: Array<String>) {
         PermissionHelper.requestPermissions(
@@ -101,6 +83,7 @@ open class BaseActivity : AppCompatActivity() {
                 if (loadingView != null) return@post
                 loadingView = LoadingView(this)
                 decorView.addView(loadingView, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+                loadingView?.show(message)
             }
         }
     }

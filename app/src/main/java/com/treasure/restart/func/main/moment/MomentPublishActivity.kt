@@ -16,6 +16,7 @@ import com.treasure.basic.helper.AppEventManager
 import com.treasure.basic.utils.ToastUtils
 import com.treasure.restart.R
 import com.treasure.restart.base.BaseActivity
+import com.treasure.restart.func.FileUploadViewModel
 import com.treasure.restart.func.media.ImagePreviewActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -159,8 +160,7 @@ class MomentPublishActivity : BaseActivity() {
         lifecycleScope.launch {
             fileUploadViewModel.uploadResult.collectLatest {
                 if (it.isNullOrEmpty()) {
-                    ToastUtils.show("图片上传失败")
-                    hindLoading()
+                    hideLoading()
                 } else {
                     momentViewModel.publishMoment(etContent.text.toString().trim(), imageUrls = it)
                 }
@@ -174,7 +174,7 @@ class MomentPublishActivity : BaseActivity() {
                     finish()
                 } ?: run {
                     ToastUtils.show("动态发布失败")
-                    hindLoading()
+                    hideLoading()
                 }
             }
         }

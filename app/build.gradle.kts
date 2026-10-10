@@ -49,7 +49,6 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
@@ -64,4 +63,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(project(":android-basic"))
+
+    implementation("io.github.scwang90:refresh-layout-kernel:3.0.0-alpha") //刷新组件
+    implementation("io.github.scwang90:refresh-header-classics:3.0.0-alpha") //刷新头组件
+    implementation("io.github.scwang90:refresh-footer-classics:3.0.0-alpha") //刷新脚组件
 }
